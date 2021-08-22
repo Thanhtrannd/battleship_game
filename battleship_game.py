@@ -42,8 +42,11 @@ class Ship:
     def get_ship_type(self):
         return self.__ship_type
 
-    def get_ship_coordinates(self):
-        return self.__coordinates_list
+    def check_coordinate_in_ship_coordinate_list(self, coordinate):
+        if coordinate in self.__coordinates_list:
+            return True
+        else:
+            return False
 
     def check_sank(self, shot_coordinates):
         """ Check if ship sank or not. Starting with adding the new shot
@@ -458,7 +461,14 @@ class GamePlayGui:
             pass
 
         # Create set up label for the current ship
-        self.__ship_set_up_label = self.__bg_canvas.create_text(75, 50, anchor="nw", text=f"Anchoring {self.__ship_name}\nplease choose {self.__no_of_coor} locations", fill="#2C7083", font=("Algerian", "20", "bold"), justify="center")
+        self.__ship_set_up_label = self.__bg_canvas.create_text(75, 50,
+                                                                anchor="nw",
+                                                                text=f"Anchoring {self.__ship_name}\n"
+                                                                     f"please choose {self.__no_of_coor} locations",
+                                                                fill="#2C7083",
+                                                                font=("Algerian", "20", "bold"),
+                                                                justify="center")
+
         # Data structure to store all clicked coordinates for current ship.
         # This will be checked check for validity of all selected coordinates
         # before saving a new Ship object
@@ -499,7 +509,9 @@ class GamePlayGui:
 
             # Create a hit_or_miss yesno messagebox to mark the shot as hit or
             # miss
-            self.__hit_or_miss_message = messagebox.askyesno("Your shot", "Was it a hit?", icon="question")
+            self.__hit_or_miss_message = messagebox.askyesno("Your shot",
+                                                             "Was it a hit?",
+                                                             icon="question")
 
             # When that was a hit
             if self.__hit_or_miss_message is True:
@@ -561,7 +573,9 @@ class GamePlayGui:
             elif self.__clicked_button["text"] == "O":
                 # Create messagebox to confirm the clicked button to prevent
                 # accidental click
-                self.__message = messagebox.askquestion("Opponent\'s shot", f"Did opponent shoot at {self.__clicked_coordinate}?")
+                self.__message = messagebox.askquestion("Opponent\'s shot",
+                                                        f"Did opponent shoot "
+                                                        f"at {self.__clicked_coordinate}?")
 
                 # If it is confirmed as a hit from opponent to ally ocean grid
                 if self.__message == "yes":
@@ -570,7 +584,9 @@ class GamePlayGui:
 
                     # Modify button's text to "X", disable button, change
                     # cursor to default arrow
-                    self.__clicked_button.configure(text="X", disabledforeground="red", state=DISABLED, cursor="")
+                    self.__clicked_button.configure(text="X",
+                                                    disabledforeground="red",
+                                                    state=DISABLED, cursor="")
 
                     # Loop through all Ship objects and check if any ally ship
                     # is just sunk
@@ -578,7 +594,7 @@ class GamePlayGui:
                         # Search for same coordinates of clicked coordinates in
                         # ship_coordinates. Call class Ship's check_sank
                         # function to check if ship is just sunk
-                        if self.__clicked_coordinate in ship.get_ship_coordinates():
+                        if ship.check_coordinate_in_ship_coordinate_list(self.__clicked_coordinate) is True:
                             # If ship is just sunk
                             if ship.check_sank(self.__clicked_coordinate) is True:
                                 # Modify announcement label to announce the
@@ -635,13 +651,22 @@ class GamePlayGui:
         # buttons does not match the required number of ship type's coordinates
         if len(self.__ship_coordinates) != self.__no_of_coor:
             # Show error messagebox
-            self.__errormessage = messagebox.showerror("Error", f"Please choose exactly {self.__no_of_coor} ship locations.")
+            self.__errormessage = messagebox.showerror("Error",
+                                                       f"Please choose exactly"
+                                                       f" {self.__no_of_coor} "
+                                                       f"ship locations.")
 
         # If the selected coordinates are invalid
         elif self.check_set_up_locations() is False:
             # Show error messagebox
             self.__errormessage = messagebox.showerror("Error",
-                                                       f"Each ship must be placed horizontally or vertically across grid spaces—not diagonally. Please rechoose ship locations.")
+                                                       f"Each ship must be "
+                                                       f"placed horizontally "
+                                                       f"or vertically across "
+                                                       f"grid spaces—not "
+                                                       f"diagonally. Please "
+                                                       f"rechoose ship "
+                                                       f"locations.")
 
         # If all selected coordinates are valid
         else:
@@ -656,7 +681,9 @@ class GamePlayGui:
             self.__ships_list.append(Ship(self.__ship_name, self.__ship_coordinates))
 
             # Show announcement label
-            self.__announcement_label.configure(text=f"{self.__ship_name}'s coordinates are successfully saved!")
+            self.__announcement_label.configure(text=f"{self.__ship_name}'s "
+                                                     f"coordinates are "
+                                                     f"successfully saved!")
 
             # Set up the next ship
             self.__set_up_ship += 1
@@ -675,16 +702,25 @@ class GamePlayGui:
         """This function is to mark that the battle starts. Some old widgets
         are deleted and some new ones are created"""
         # Create a message box for confirming game start
-        self.__infomessage = messagebox.showinfo("Battle starts", "Hit ok when you ready!")
+        self.__infomessage = messagebox.showinfo("Battle starts",
+                                                 "Hit ok when you ready!")
 
         # Delete old labels and button and create new ones with new text
         self.__bg_canvas.delete(self.__set_up_label)
         self.__save_button.destroy()  # Destroy save button
         self.__bg_canvas.delete(self.__ship_set_up_label)
-        self.__battle_start_label = self.__bg_canvas.create_text(50, 15, anchor="nw", text="Shoot!", fill="#2C7083", font=("Chiller", "30", "bold"), justify="center")
+        self.__bg_canvas.create_text(50, 15, anchor="nw", text="Shoot!",
+                                     fill="#2C7083", justify="center",
+                                     font=("Chiller", "30", "bold"))
 
         # Add instruction label for game play
-        self.__instruction_label = self.__bg_canvas.create_text(75, 50, anchor="nw", text=f"Mark opponent's hits on your own grid and shoot by click on opponent's grid!\nDon't forget to check ships that you sank", fill="#2C7083", font=("Algerian", "17", "bold"), justify="center")
+        self.__bg_canvas.create_text(75, 50, anchor="nw", fill="#2C7083",
+                                     text=f"Mark opponent's hits on your own "
+                                          f"grid and shoot by click on "
+                                          f"opponent's grid!\nDon't forget to "
+                                          f"check ships that you sank",
+                                     font=("Algerian", "17", "bold"),
+                                     justify="center")
 
         # Add ship images and checkbutton to keep track of opponent sunk ships
         # Create frame to contain ship image and sunk ship checkbutton
@@ -700,7 +736,14 @@ class GamePlayGui:
 
             # Add ship's sunk checkbutton
             self.__sink_ship = IntVar()
-            self.__sink_ship_check = Checkbutton(self.__ship_img_frame, onvalue=1, offvalue=0, fg="#88ca9c", disabledforeground="red", text=self.__ship_name_list[ship_index], font=("Chiller", "15", "bold"), variable=self.__sink_ship, cursor="target", command=lambda ship_type=self.__ship_name_list[ship_index]: self.mark_ship_sank(ship_type))
+            self.__sink_ship_check = Checkbutton(self.__ship_img_frame,
+                                                 fg="#88ca9c",
+                                                 disabledforeground="red",
+                                                 text=self.__ship_name_list[ship_index],
+                                                 font=("Chiller", "15", "bold")
+                                                 , variable=self.__sink_ship,
+                                                 cursor="target",
+                                                 command=lambda ship_type=self.__ship_name_list[ship_index]: self.mark_ship_sank(ship_type))
             self.__sink_ship_check.grid(row=ship_index * 2 + 1, column=0)
 
             # Save id of the checkbutton into ship_dict, add 4th element to per
@@ -764,6 +807,8 @@ class GamePlayGui:
 
                 self.__bullet_up.place_forget()
 
+                self.__gp_window.update()
+
             # Animate bullet flying downwards to opponent's ocean grid towards
             # the clicked button
             for y in range(0, self.__des_y-55, 5):
@@ -777,6 +822,8 @@ class GamePlayGui:
 
                 self.__bullet_down.place_forget()
 
+                self.__gp_window.update()
+
         if action == "ally":
             # Animate bullet flying upwards from opponent's ocean grid
             for y in range(450, 0, -5):
@@ -786,11 +833,13 @@ class GamePlayGui:
                 self.__bullet_up.lift()
 
                 self.__gp_window.update_idletasks()
-                time.sleep(0.00001)
+                time.sleep(0.0001)
 
                 self.__bullet_up.place_forget()
 
-            # Animate bullet flying downwards to opponent's ocean grid towards
+                self.__gp_window.update()
+
+            # Animate bullet flying downwards to ally's ocean grid towards
             # the clicked button
             for y in range(0, self.__des_y - 55, 5):
                 self.__bullet_down.place(x=self.__des_x - 10, y=y, anchor="s")
@@ -799,9 +848,12 @@ class GamePlayGui:
                 self.__bullet_down.lift()
 
                 self.__gp_window.update_idletasks()
-                time.sleep(0.00001)
+                time.sleep(0.0001)
 
                 self.__bullet_down.place_forget()
+
+                self.__gp_window.update()
+
 
         # Create explosion animation by looping through the list of explosion
         # images and place it on screen one after another
@@ -813,9 +865,12 @@ class GamePlayGui:
             self.__explosion_label.lift()
 
             self.__gp_window.update_idletasks()
-            time.sleep(0.03)
+            time.sleep(0.04)
 
             self.__explosion_label.place_forget()
+
+            self.__gp_window.update()
+
 
     def mark_ship_sank(self, ship_type):
         """This function is called when an opponent's sunk ship checkbox is
